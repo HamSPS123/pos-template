@@ -28,6 +28,7 @@ import {
   getTotalOrders,
   getTodaySalesTotal,
 } from "@/lib/mock-dashboard"
+import { mockProducts, mockCategories } from "@/lib/mock-data"
 
 const BranchMap = dynamic(() => import("@/components/dashboard/branch-map"), {
   ssr: false,
@@ -210,7 +211,7 @@ export default function SuperAdminDashboard() {
           </CardContent>
         </Card>
       {/* Revenue Overview Chart — Image 1 style with Y-axis + paired bars */}
-      <div className="grid gap-4 lg:grid-cols-4">
+      <div className="grid gap-4 lg:grid-cols-5">
         <Card className="shadow-none lg:col-span-3">
           <CardHeader className="pb-0">
             <div className="flex items-start justify-between">
@@ -283,7 +284,7 @@ export default function SuperAdminDashboard() {
           </CardContent>
         </Card>
   
-        <Card className="shadow-none">
+        <Card className="shadow-none lg:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-primary" />
@@ -413,6 +414,32 @@ export default function SuperAdminDashboard() {
               <div>
                 <p className="text-[11px] text-muted-foreground">ອັດຕາກຳໄລ</p>
                 <p className="text-lg font-bold">{((getTotalProfit() / getTotalRevenue()) * 100).toFixed(1)}%</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          <Card className="shadow-none">
+            <CardContent className="py-4 px-5 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                <ShoppingCart className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">ຈຳນວນສິນຄ້າທັງໝົດ</p>
+                <p className="text-lg font-bold">{mockProducts.length.toLocaleString()}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          <Card className="shadow-none">
+            <CardContent className="py-4 px-5 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-pink-500/10 flex items-center justify-center shrink-0">
+                <Store className="h-5 w-5 text-pink-600" />
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">ປະເພດສິນຄ້າທັງໝົດ</p>
+                <p className="text-lg font-bold">{mockCategories.length}</p>
               </div>
             </CardContent>
           </Card>
