@@ -451,7 +451,7 @@ export default function PosPage() {
           </div>
 
           {/* Category tabs */}
-          <div className="flex gap-1 px-3 py-2 overflow-x-auto border-b bg-muted/20">
+          <div className="flex gap-1 px-3 py-2 overflow-x-auto border-b bg-muted/20 pb-2 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20">
             <Button
               variant={activeCategoryId === null ? "default" : "outline"}
               size="sm"
@@ -475,7 +475,7 @@ export default function PosPage() {
 
           {/* Product grid */}
           <ScrollArea className="flex-1">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-3">
               {filteredProducts.map((product) => (
                 <button
                   key={product.id}

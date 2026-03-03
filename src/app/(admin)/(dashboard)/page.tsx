@@ -1,7 +1,9 @@
 "use client"
 
+import { useRef } from "react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
+import type { BranchMapHandle } from "@/components/dashboard/branch-map"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -15,12 +17,27 @@ import {
   MapPin,
   ArrowUpRight,
   ArrowDownRight,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  Zap,
+  Banknote,
+  CreditCard,
+  Smartphone,
+  Building2,
+  Package,
+  Clock,
 } from "lucide-react"
 import {
   mockBranches,
   mockMonthlySales,
   mockTopProducts,
   mockRevenueByCategory,
+  mockAlerts,
+  mockLiveSales,
+  mockPaymentBreakdown,
+  mockHourlySales,
+  mockLowStock,
   formatLAK,
   getTotalRevenue,
   getTotalExpense,
@@ -109,6 +126,7 @@ const categoryColors = [
 ]
 
 export default function SuperAdminDashboard() {
+  const mapRef = useRef<BranchMapHandle>(null)
   const maxMonthlyRevenue = Math.max(...mockMonthlySales.map((m) => m.revenue))
   const totalCategoryRevenue = mockRevenueByCategory.reduce((s, c) => s + c.revenue, 0)
   const maxCategoryRevenue = Math.max(...mockRevenueByCategory.map((c) => c.revenue))
@@ -166,12 +184,16 @@ export default function SuperAdminDashboard() {
           <CardContent className="p-2 pt-0">
             <div className="grid gap-4 lg:grid-cols-5">
               <div className="h-full rounded-xl overflow-hidden border lg:col-span-4">
-                <BranchMap branches={mockBranches} />
+                <BranchMap ref={mapRef} branches={mockBranches} />
               </div>
               <div className="divide-y lg:col-span-1">
                   <ScrollArea className="h-[600px]">
                     {mockBranches.map((branch) => (
-                      <div key={branch.id} className="px-4 py-3.5 hover:bg-muted/30 border-b border-muted transition-colors">
+                      <div
+                        key={branch.id}
+                        className="px-4 py-3.5 hover:bg-muted/30 border-b border-muted transition-colors cursor-pointer"
+                        onClick={() => mapRef.current?.flyTo(branch.lat, branch.lng)}
+                      >
                         {/* Row 1: Name + Status */}
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <div className="min-w-0">
@@ -445,6 +467,223 @@ export default function SuperAdminDashboard() {
           </Card>
         </div>
       </div>
+      </div>
+
+      {/* ── Alert Panel ── */}
+      {/* <Card className="shadow-none">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            ການແຈ້ງເຕືອນ
+            <span className="ml-auto text-[10px] font-normal bg-red-500 text-white px-2 py-0.5 rounded-full">
+              {mockAlerts.filter(a => a.type !== "info").length} ດ່ວນ
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y">
+            {mockAlerts.map((alert) => {
+              const cfg = {
+                danger:  { icon: AlertCircle,   bg: "bg-red-50 dark:bg-red-950/20",    border: "border-l-red-500",    iconColor: "text-red-500",    badge: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400" },
+                warning: { icon: AlertTriangle, bg: "bg-amber-50 dark:bg-amber-950/20", border: "border-l-amber-500", iconColor: "text-amber-500",  badge: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400" },
+                info:    { icon: Info,           bg: "bg-blue-50 dark:bg-blue-950/20",   border: "border-l-blue-400",  iconColor: "text-blue-500",   badge: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400" },
+              }[alert.type]
+              const Icon = cfg.icon
+              return (
+                <div key={alert.id} className={`flex items-start gap-3 px-4 py-3 border-l-4 ${cfg.border} ${cfg.bg}`}>
+                  <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${cfg.iconColor}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold">{alert.title}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{alert.description}</p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    {alert.branch && (
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${cfg.badge}`}>{alert.branch}</span>
+                    )}
+                    <p className="text-[10px] text-muted-foreground mt-1">{alert.time}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </CardContent>
+      </Card> */}
+
+      {/* ── Hourly Sales + Payment Breakdown ── */}
+      <div className="grid gap-4 lg:grid-cols-5">
+        {/* Hourly Sales Chart */}
+        <Card className="shadow-none lg:col-span-3">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Clock className="h-4 w-4 text-primary" />
+              ຍອດຂາຍລາຍຊົ່ວໂມງ (ມື້ນີ້)
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">ທຸກສາຂາ · ຊົ່ວໂມງເລີ່ມຈາກ 07:00</p>
+          </CardHeader>
+          <CardContent className="pt-2">
+            {(() => {
+              const maxH = Math.max(...mockHourlySales.map(h => h.revenue))
+              const chartH = 160
+              return (
+                <div className="flex gap-1 items-end" style={{ height: `${chartH + 24}px` }}>
+                  {mockHourlySales.map((h) => {
+                    const barH = (h.revenue / maxH) * chartH
+                    const isPeak = h.revenue === maxH
+                    return (
+                      <div key={h.hour} className="flex-1 flex flex-col items-center gap-1 group/hbar">
+                        <div className="w-full flex items-end justify-center" style={{ height: `${chartH}px` }}>
+                          <div
+                            className={`w-full rounded-t-sm transition-all cursor-default ${isPeak ? "bg-primary" : "bg-primary/30 group-hover/hbar:bg-primary/60"}`}
+                            style={{ height: `${barH}px` }}
+                            title={`${h.hour}: ₭${formatLAK(h.revenue)}`}
+                          />
+                        </div>
+                        <span className="text-[9px] text-muted-foreground leading-none">{h.hour.slice(0, 2)}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })()}
+            <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground border-t pt-2">
+              <span>Peak: <span className="font-semibold text-foreground">17:00 — ₭{formatLAK(mockHourlySales.find(h => h.revenue === Math.max(...mockHourlySales.map(x => x.revenue)))!.revenue)}</span></span>
+              <span>ລວມ: <span className="font-semibold text-foreground">₭{formatLAK(mockHourlySales.reduce((s, h) => s + h.revenue, 0))}</span></span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Payment Breakdown */}
+        <Card className="shadow-none lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Banknote className="h-4 w-4 text-primary" />
+              ການຊຳລະເງິນ
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">ສັດສ່ວນຕາມວິທີຊຳລະ</p>
+          </CardHeader>
+          <CardContent>
+            {/* Donut-style bar */}
+            <div className="flex rounded-full overflow-hidden h-4 mb-4 gap-[2px]">
+              {mockPaymentBreakdown.map((p) => (
+                <div
+                  key={p.method}
+                  className="h-full transition-all"
+                  style={{ width: `${p.value}%`, background: p.color }}
+                  title={`${p.label}: ${p.value}%`}
+                />
+              ))}
+            </div>
+            <div className="space-y-2.5">
+              {mockPaymentBreakdown.map((p) => {
+                const Icon = p.method === "cash" ? Banknote : p.method === "card" ? CreditCard : p.method === "transfer" ? Building2 : Smartphone
+                return (
+                  <div key={p.method} className="flex items-center gap-2.5">
+                    <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: p.color }} />
+                    <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span className="text-xs flex-1">{p.label}</span>
+                    <span className="text-xs font-semibold tabular-nums" style={{ color: p.color }}>{p.value}%</span>
+                    <span className="text-[11px] text-muted-foreground tabular-nums w-24 text-right">₭{formatLAK(p.amount)}</span>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="mt-3 pt-2 border-t flex justify-between text-xs">
+              <span className="text-muted-foreground">ລວມທຸລະກຳ</span>
+              <span className="font-bold">₭{formatLAK(mockPaymentBreakdown.reduce((s, p) => s + p.amount, 0))}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── Live Sales Feed + Low Stock ── */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Live Sales Feed */}
+        <Card className="shadow-none">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Zap className="h-4 w-4 text-green-500" />
+              ການຂາຍລ່າສຸດ
+              <span className="ml-1 flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              </span>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Real-time · ທຸກສາຂາ</p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[320px]">
+              <div className="divide-y">
+                {mockLiveSales.map((sale, i) => {
+                  const payIcon = { cash: Banknote, card: CreditCard, transfer: Building2, ewallet: Smartphone }[sale.payment]
+                  const PayIcon = payIcon
+                  const payColor = { cash: "text-blue-500", card: "text-green-500", transfer: "text-amber-500", ewallet: "text-purple-500" }[sale.payment]
+                  return (
+                    <div key={sale.id} className={`flex items-center gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors ${i === 0 ? "bg-green-50/50 dark:bg-green-950/10" : ""}`}>
+                      <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0 text-[10px] font-bold text-muted-foreground">
+                        {sale.branchShort.slice(0, 2)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold">{sale.branch}</p>
+                        <p className="text-[10px] text-muted-foreground">{sale.cashier} · {sale.items} ລາຍການ</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-bold">₭{formatLAK(sale.total)}</p>
+                        <div className="flex items-center justify-end gap-1 mt-0.5">
+                          <PayIcon className={`h-3 w-3 ${payColor}`} />
+                          <span className="text-[10px] text-muted-foreground">{sale.time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+
+        {/* Low Stock Warning */}
+        <Card className="shadow-none">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+              <Package className="h-4 w-4 text-red-500" />
+              ສິນຄ້າໃກ້ໝົດ
+              <span className="ml-auto text-[10px] font-normal bg-red-500 text-white px-2 py-0.5 rounded-full">
+                {mockLowStock.length} ລາຍການ
+              </span>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">stock ຕ່ຳກວ່າ minimum</p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[320px]">
+              <div className="divide-y">
+                {mockLowStock.map((item) => {
+                  const pct = Math.round((item.stock / item.minStock) * 100)
+                  const barColor = pct <= 30 ? "bg-red-500" : pct <= 60 ? "bg-amber-500" : "bg-green-500"
+                  return (
+                    <div key={item.id} className="px-4 py-3 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <div>
+                          <p className="text-sm font-semibold">{item.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{item.sku} · {item.category}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className={`text-sm font-bold ${pct <= 30 ? "text-red-500" : "text-amber-500"}`}>{item.stock} ຊິ້ນ</p>
+                          <p className="text-[10px] text-muted-foreground">min: {item.minStock}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground tabular-nums w-16 text-right">{item.branch}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
 
     </div>

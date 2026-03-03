@@ -300,6 +300,100 @@ export const mockRevenueByCategory = [
   { category: "Frozen", revenue: 750_000, fill: "var(--color-destructive)" },
 ]
 
+// ── Alerts ─────────────────────────────────────────────────────
+
+export interface DashboardAlert {
+  id: string
+  type: "warning" | "danger" | "info"
+  title: string
+  description: string
+  branch?: string
+  time: string
+}
+
+export const mockAlerts: DashboardAlert[] = [
+  { id: "a-001", type: "danger",  title: "ສາຂາວັດຕາຍ ປິດໃຫ້ບໍລິການ", description: "ສາຂານີ້ຢູ່ໃນສະຖານະ inactive", branch: "ສາຂາວັດຕາຍ", time: "ມື້ນີ້" },
+  { id: "a-002", type: "warning", title: "ຍອດຂາຍດົງໂດກຕ່ຳກວ່າ target", description: "ຍອດຂາຍ ₭98,000 ທຽບ target ₭150,000 (65%)", branch: "ສາຂາດົງໂດກ", time: "ມື້ນີ້" },
+  { id: "a-003", type: "warning", title: "ສາຂາສີໂຄດຕະບອງ stock ໃກ້ໝົດ", description: "3 ລາຍການສິນຄ້າ stock ເຫຼືອໜ້ອຍກວ່າ 10 ຊິ້ນ", branch: "ສາຂາສີໂຄດຕະບອງ", time: "2 ຊົ່ວໂມງກ່ອນ" },
+  { id: "a-004", type: "info",    title: "ພະນັກງານໃໝ່ລົງທະບຽນ", description: "Souksamone Phomvihane ໄດ້ເຂົ້າຮ່ວມ ສາຂາທ່າເດື່ອ", branch: "ສາຂາທ່າເດື່ອ", time: "3 ຊົ່ວໂມງກ່ອນ" },
+  { id: "a-005", type: "info",    title: "ອໍເດີໃຫຍ່ຈາກ B2B", description: "ອໍເດີ ₭2,450,000 ລໍຖ້າການຢືນຢັນ", branch: "ສາຂາຕະຫຼາດເຊົ້າ", time: "4 ຊົ່ວໂມງກ່ອນ" },
+]
+
+// ── Live Sales Feed ─────────────────────────────────────────────
+
+export interface LiveSale {
+  id: string
+  branch: string
+  branchShort: string
+  cashier: string
+  items: number
+  total: number
+  payment: "cash" | "card" | "transfer" | "ewallet"
+  time: string
+}
+
+export const mockLiveSales: LiveSale[] = [
+  { id: "ls-001", branch: "ສາຂາຕະຫຼາດເຊົ້າ", branchShort: "ຕລດ.ເຊົ້າ", cashier: "Noy K.", items: 5, total: 487_500, payment: "cash",     time: "ດຽວນີ້" },
+  { id: "ls-002", branch: "ສາຂາໂພນທັນ",       branchShort: "ໂພນທັນ",    cashier: "Keo V.",  items: 3, total: 289_000, payment: "card",     time: "2 ນທ." },
+  { id: "ls-003", branch: "ສາຂາທ່າເດື່ອ",     branchShort: "ທ່າເດື່ອ",  cashier: "Dao P.",  items: 8, total: 1_245_750, payment: "cash",   time: "5 ນທ." },
+  { id: "ls-004", branch: "ສາຂາດົງໂດກ",       branchShort: "ດົງໂດກ",    cashier: "Sone B.", items: 2, total: 175_000, payment: "ewallet",  time: "8 ນທ." },
+  { id: "ls-005", branch: "ສາຂາຕະຫຼາດເຊົ້າ", branchShort: "ຕລດ.ເຊົ້າ", cashier: "Noy K.", items: 6, total: 892_250, payment: "transfer",  time: "12 ນທ." },
+  { id: "ls-006", branch: "ສາຂາສີໂຄດຕະບອງ",  branchShort: "ສີໂຄດ",     cashier: "Phout.", items: 4, total: 356_000, payment: "cash",     time: "15 ນທ." },
+  { id: "ls-007", branch: "ສາຂາໂພນທັນ",       branchShort: "ໂພນທັນ",    cashier: "Keo V.",  items: 1, total: 150_000, payment: "card",     time: "18 ນທ." },
+  { id: "ls-008", branch: "ສາຂາທ່າເດື່ອ",     branchShort: "ທ່າເດື່ອ",  cashier: "Dao P.",  items: 7, total: 1_089_500, payment: "cash",  time: "21 ນທ." },
+  { id: "ls-009", branch: "ສາຂາດົງໂດກ",       branchShort: "ດົງໂດກ",    cashier: "Sone B.", items: 3, total: 425_000, payment: "ewallet",  time: "25 ນທ." },
+  { id: "ls-010", branch: "ສາຂາຕະຫຼາດເຊົ້າ", branchShort: "ຕລດ.ເຊົ້າ", cashier: "Noy K.", items: 5, total: 678_750, payment: "cash",     time: "28 ນທ." },
+]
+
+// ── Payment Method Breakdown ────────────────────────────────────
+
+export const mockPaymentBreakdown = [
+  { method: "cash",     label: "ເງິນສົດ",    value: 58, amount: 10_740_000, color: "#2563eb" },
+  { method: "card",     label: "ບັດ",         value: 22, amount: 4_070_000,  color: "#22c55e" },
+  { method: "transfer", label: "ໂອນ",         value: 14, amount: 2_590_000,  color: "#f59e0b" },
+  { method: "ewallet",  label: "E-Wallet",    value: 6,  amount: 1_110_000,  color: "#a855f7" },
+]
+
+// ── Hourly Sales Today ──────────────────────────────────────────
+
+export const mockHourlySales = [
+  { hour: "07:00", revenue: 45_000 },
+  { hour: "08:00", revenue: 128_000 },
+  { hour: "09:00", revenue: 215_000 },
+  { hour: "10:00", revenue: 189_000 },
+  { hour: "11:00", revenue: 245_000 },
+  { hour: "12:00", revenue: 312_000 },
+  { hour: "13:00", revenue: 178_000 },
+  { hour: "14:00", revenue: 267_000 },
+  { hour: "15:00", revenue: 198_000 },
+  { hour: "16:00", revenue: 289_000 },
+  { hour: "17:00", revenue: 342_000 },
+  { hour: "18:00", revenue: 224_000 },
+  { hour: "19:00", revenue: 156_000 },
+  { hour: "20:00", revenue: 87_000 },
+]
+
+// ── Low Stock Items ─────────────────────────────────────────────
+
+export interface LowStockItem {
+  id: string
+  name: string
+  sku: string
+  branch: string
+  stock: number
+  minStock: number
+  category: string
+}
+
+export const mockLowStock: LowStockItem[] = [
+  { id: "ls-001", name: "Pork Loin",       sku: "MEAT-001", branch: "ສີໂຄດຕະບອງ", stock: 4,  minStock: 20, category: "Meat & Poultry" },
+  { id: "ls-002", name: "Fresh Milk 1L",   sku: "DAIRY-001", branch: "ດົງໂດກ",     stock: 7,  minStock: 30, category: "Dairy" },
+  { id: "ls-003", name: "Croissant",       sku: "BAK-001",   branch: "ວັດຕາຍ",      stock: 3,  minStock: 15, category: "Bakery" },
+  { id: "ls-004", name: "Orange Juice",    sku: "BEV-001",   branch: "ໂພນທັນ",      stock: 9,  minStock: 25, category: "Beverages" },
+  { id: "ls-005", name: "Potato Chips",    sku: "SNACK-001", branch: "ທ່າເດື່ອ",    stock: 6,  minStock: 20, category: "Snacks" },
+  { id: "ls-006", name: "Banana",          sku: "FRUIT-001", branch: "ຕລດ.ເຊົ້າ",  stock: 12, minStock: 40, category: "Fruits" },
+]
+
 // ── Helpers ────────────────────────────────────────────────────
 
 export const formatLAK = (amount: number) =>
