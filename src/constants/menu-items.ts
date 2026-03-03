@@ -40,6 +40,18 @@ export const menuConfig: MenuSection[] = [
         icon: LayoutDashboard,
         permission: "dashboard.view",
       },
+      {
+        title: "Branch Dashboard",
+        href: "/branches",
+        icon: LayoutDashboard,
+        permission: "dashboard.view",
+      },
+      {
+        title: "Cashier Dashboard",
+        href: "/cashiers",
+        icon: LayoutDashboard,
+        permission: "dashboard.view",
+      },
     ],
   },
   {

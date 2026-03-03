@@ -32,49 +32,49 @@ const branch = mockBranches[0]
 
 const statCards = [
   {
-    title: "Revenue (This Month)",
-    value: `฿${formatLAK(branch.totalRevenue)}`,
+    title: "ລາຍຮັບ (ເດືອນນີ້)",
+    value: `₭${formatLAK(branch.totalRevenue)}`,
     change: "+12.4%",
     icon: DollarSign,
     color: "text-green-600",
     bg: "bg-green-500/10",
   },
   {
-    title: "Expense (This Month)",
-    value: `฿${formatLAK(branch.totalExpense)}`,
+    title: "ລາຍຈ່າຍ (ເດືອນນີ້)",
+    value: `₭${formatLAK(branch.totalExpense)}`,
     change: "+6.2%",
     icon: TrendingDown,
     color: "text-red-500",
     bg: "bg-red-500/10",
   },
   {
-    title: "Net Profit",
-    value: `฿${formatLAK(branch.profit)}`,
+    title: "ກຳໄລສຸດທິ",
+    value: `₭${formatLAK(branch.profit)}`,
     change: "+18.7%",
     icon: TrendingUp,
     color: "text-primary",
     bg: "bg-primary/10",
   },
   {
-    title: "Today's Sales",
-    value: `฿${formatLAK(branch.todaySales)}`,
+    title: "ຍອດຂາຍມື້ນີ້",
+    value: `₭${formatLAK(branch.todaySales)}`,
     change: "+5.3%",
     icon: ShoppingCart,
     color: "text-amber-600",
     bg: "bg-amber-500/10",
   },
   {
-    title: "Total Orders",
+    title: "ອໍເດີທັງໝົດ",
     value: branch.totalOrders.toLocaleString(),
-    change: "+8 today",
+    change: "+8 ມື້ນີ້",
     icon: Receipt,
     color: "text-violet-600",
     bg: "bg-violet-500/10",
   },
   {
-    title: "Employees",
+    title: "ພະນັກງານ",
     value: branch.employeeCount.toString(),
-    change: "3 on shift",
+    change: "3 ກະວຽກ",
     icon: Users,
     color: "text-sky-600",
     bg: "bg-sky-500/10",
@@ -92,12 +92,7 @@ export default function BranchDashboardPage() {
   const maxDailyRevenue = Math.max(...mockDailySales.map((d) => d.revenue))
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Branch Dashboard</h1>
-        <p className="text-muted-foreground">{branch.name}</p>
-      </div>
-
+    <div className="space-y-5">
       {/* Stat cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {statCards.map((stat) => {
@@ -126,8 +121,8 @@ export default function BranchDashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Daily Sales (This Week)</CardTitle>
-            <p className="text-xs text-muted-foreground">Revenue &amp; orders per day</p>
+            <CardTitle className="text-base">ຍອດຂາຍລາຍວັນ (ອາທິດນີ້)</CardTitle>
+            <p className="text-xs text-muted-foreground">ລາຍຮັບ ແລະ ອໍເດີ ຕໍ່ມື້</p>
           </CardHeader>
           <CardContent>
             <div className="flex items-end gap-3 h-48">
@@ -155,9 +150,9 @@ export default function BranchDashboardPage() {
               })}
             </div>
             <div className="flex items-center gap-4 pt-4 border-t mt-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-primary" /> Revenue</span>
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-red-400/60" /> Expense</span>
-              <span className="ml-auto">Numbers = orders count</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-primary" /> ລາຍຮັບ</span>
+              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-red-400/60" /> ລາຍຈ່າຍ</span>
+              <span className="ml-auto">ຕົວເລກ = ຈຳນວນອໍເດີ</span>
             </div>
           </CardContent>
         </Card>
@@ -167,7 +162,7 @@ export default function BranchDashboardPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-red-500" />
-              Recent Expenses
+              ລາຍຈ່າຍຫຼ້າສຸດ
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -182,16 +177,16 @@ export default function BranchDashboardPage() {
                         <span className="text-[10px] text-muted-foreground">{exp.date}</span>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-red-500">-฿{formatLAK(exp.amount)}</span>
+                    <span className="text-sm font-bold text-red-500">-₭{formatLAK(exp.amount)}</span>
                   </div>
                 ))}
               </div>
             </ScrollArea>
             <div className="px-4 py-2 border-t bg-muted/30">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">Total Expenses</span>
+                <span className="font-medium">ລາຍຈ່າຍທັງໝົດ</span>
                 <span className="font-bold text-red-500">
-                  -฿{formatLAK(mockBranchExpenses.reduce((s, e) => s + e.amount, 0))}
+                  -₭{formatLAK(mockBranchExpenses.reduce((s, e) => s + e.amount, 0))}
                 </span>
               </div>
             </div>
@@ -206,9 +201,9 @@ export default function BranchDashboardPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" />
-              Recent Sales
+              ການຂາຍຫຼ້າສຸດ
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Latest transactions today</p>
+            <p className="text-xs text-muted-foreground">ທຸລະກຳລ່າສຸດມື້ນີ້</p>
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[380px]">
@@ -229,10 +224,10 @@ export default function BranchDashboardPage() {
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {sale.cashier} · {sale.items} items · {time}
+                          {sale.cashier} · {sale.items} ລາຍການ · {time}
                         </p>
                       </div>
-                      <span className="text-sm font-bold">฿{formatLAKDecimal(sale.total)}</span>
+                      <span className="text-sm font-bold">₭{formatLAKDecimal(sale.total)}</span>
                     </div>
                   )
                 })}
@@ -246,9 +241,9 @@ export default function BranchDashboardPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
-              Top Selling Products
+              ສິນຄ້າຂາຍດີ
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Best sellers this month</p>
+            <p className="text-xs text-muted-foreground">ຂາຍດີທີ່ສຸດເດືອນນີ້</p>
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[380px]">
@@ -273,7 +268,7 @@ export default function BranchDashboardPage() {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-bold text-primary">{product.totalSold.toLocaleString()}</p>
-                      <p className="text-[10px] text-muted-foreground">฿{formatLAK(product.revenue)}</p>
+                      <p className="text-[10px] text-muted-foreground">₭{formatLAK(product.revenue)}</p>
                     </div>
                   </div>
                 ))}

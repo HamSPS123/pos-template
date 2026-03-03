@@ -202,13 +202,13 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-sm">
-              <Image src={images.logo} alt="Logo" width={32} height={32} />
+            <div className="flex h-full w-full items-center justify-center rounded-sm">
+              <img src={images.logo.src} alt="Logo" className="w-40 h-16 object-cover"/>
             </div>
-            <div className="hidden sm:flex flex-col">
+            {/* <div className="hidden sm:flex flex-col">
               <span className="text-sm font-semibold leading-none">{metaData.shortTitle}</span>
               <span className="text-xs text-muted-foreground">{metaData.title}</span>
-            </div>
+            </div> */}
           </Link>
 
           {/* Spacer */}

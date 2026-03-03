@@ -9,25 +9,42 @@ interface BranchMapProps {
   branches: BranchDashboard[]
 }
 
-const storeSvg = (color: string) => `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="44" height="44">
-  <defs>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.25)"/>
-    </filter>
-  </defs>
-  <circle cx="24" cy="24" r="20" fill="${color}" filter="url(#shadow)" stroke="white" stroke-width="2.5"/>
-  <g transform="translate(12,11)" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M1 10L3 1h18l2 10"/>
-    <path d="M1 10c0 2 1.5 3 3 3s3-1 3-3"/>
-    <path d="M7 10c0 2 1.5 3 3 3s3-1 3-3"/>
-    <path d="M13 10c0 2 1.5 3 3 3s3-1 3-3"/>
-    <path d="M19 10c0 2 1.5 3 3 3"/>
-    <path d="M1 10c0 2 1.5 3 3 3"/>
-    <rect x="2" y="13" width="20" height="11" rx="1"/>
-    <rect x="9" y="17" width="6" height="7"/>
-  </g>
-</svg>`
+const storeIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/></svg>`
+
+function getShortName(name: string): string {
+  const match = name.match(/\(([^)]+)\)/)
+  return match ? match[1] : name.slice(0, 12)
+}
+
+function formatShortRevenue(n: number): string {
+  if (n >= 1_000_000) return `₭${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `₭${(n / 1_000).toFixed(0)}k`
+  return `₭${n}`
+}
+
+function pillMarker(branch: BranchDashboard) {
+  const color = branch.status === "active" ? "#22c55e" : "#94a3b8"
+  const label = getShortName(branch.name)
+  const rev = formatShortRevenue(branch.totalRevenue)
+  return `
+    <div style="
+      display: inline-flex; align-items: center; gap: 5px;
+      background: ${color}; color: white;
+      padding: 4px 10px 4px 6px; border-radius: 16px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      border: 2px solid white;
+      font-family: 'Noto Sans Lao', system-ui, sans-serif;
+      cursor: pointer;
+      line-height: 1.2;
+    ">
+      <span style="display:flex;align-items:center;justify-content:center;width:18px;height:18px;background:rgba(255,255,255,0.25);border-radius:50%;flex-shrink:0;">
+        ${storeIconSvg}
+      </span>
+      <span>${label}: ${rev}</span>
+    </div>
+  `
+}
 
 export default function BranchMap({ branches }: BranchMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -51,20 +68,19 @@ export default function BranchMap({ branches }: BranchMapProps) {
     }).addTo(map)
 
     branches.forEach((branch) => {
-      const color = branch.status === "active" ? "#2563eb" : "#94a3b8"
-
+      const html = pillMarker(branch)
       const icon = L.divIcon({
         className: "",
-        html: storeSvg(color),
-        iconSize: [44, 44],
-        iconAnchor: [22, 22],
-        popupAnchor: [0, -24],
+        html,
+        iconSize: [0, 0],
+        iconAnchor: [0, 14],
+        popupAnchor: [70, -10],
       })
 
       const marker = L.marker([branch.lat, branch.lng], { icon }).addTo(map)
 
       marker.bindPopup(`
-        <div style="min-width: 220px; font-family: system-ui, -apple-system, sans-serif; padding: 2px;">
+        <div style="min-width: 220px; font-family: 'Noto Sans Lao', system-ui, sans-serif; padding: 2px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
             <div style="width: 8px; height: 8px; border-radius: 50%; background: ${branch.status === "active" ? "#22c55e" : "#94a3b8"};"></div>
             <h3 style="margin: 0; font-size: 13px; font-weight: 700; color: #1e293b;">${branch.name}</h3>
@@ -72,21 +88,21 @@ export default function BranchMap({ branches }: BranchMapProps) {
           <p style="margin: 0 0 10px 0; font-size: 11px; color: #64748b; line-height: 1.4;">${branch.address}</p>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 8px; background: #f8fafc; border-radius: 8px; font-size: 11px;">
             <div style="text-align: center;">
-              <div style="color: #94a3b8; font-size: 10px; margin-bottom: 2px;">Revenue</div>
+              <div style="color: #94a3b8; font-size: 10px; margin-bottom: 2px;">ລາຍຮັບ</div>
               <div style="font-weight: 700; color: #16a34a;">₭${formatLAK(branch.totalRevenue)}</div>
             </div>
             <div style="text-align: center;">
-              <div style="color: #94a3b8; font-size: 10px; margin-bottom: 2px;">Expense</div>
+              <div style="color: #94a3b8; font-size: 10px; margin-bottom: 2px;">ລາຍຈ່າຍ</div>
               <div style="font-weight: 700; color: #ef4444;">₭${formatLAK(branch.totalExpense)}</div>
             </div>
             <div style="text-align: center;">
-              <div style="color: #94a3b8; font-size: 10px; margin-bottom: 2px;">Profit</div>
+              <div style="color: #94a3b8; font-size: 10px; margin-bottom: 2px;">ກຳໄລ</div>
               <div style="font-weight: 700; color: #2563eb;">₭${formatLAK(branch.profit)}</div>
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: #94a3b8;">
-            <span>📦 ${branch.totalOrders} orders</span>
-            <span>� ${branch.employeeCount} staff</span>
+            <span>📦 ${branch.totalOrders} ອໍເດີ</span>
+            <span>👥 ${branch.employeeCount} ພະນັກງານ</span>
           </div>
         </div>
       `, { className: "modern-popup" })
